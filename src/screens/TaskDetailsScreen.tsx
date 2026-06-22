@@ -30,14 +30,16 @@ export function TaskDetailsScreen({ navigation, route, tasks, onToggleTask, onDe
 
   function handleDelete() {
     onDeleteTask(taskId);
-    navigation.navigate('TaskList');
+    navigation.goBack();
   }
 
   if (!task) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Task not found</Text>
-        <Text style={styles.description}>The selected task is no longer available.</Text>
+        <View style={styles.card}>
+          <Text style={styles.title}>Task not found</Text>
+          <Text style={styles.description}>The selected task is no longer available.</Text>
+        </View>
       </View>
     );
   }
@@ -45,12 +47,17 @@ export function TaskDetailsScreen({ navigation, route, tasks, onToggleTask, onDe
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>{task.title}</Text>
-        <Text style={styles.description}>{task.description}</Text>
-        <View style={styles.metaRow}>
+        <View style={styles.header}>
+          <Text style={styles.title}>{task.title}</Text>
+
           <Text style={[styles.status, task.completed ? styles.completed : styles.pending]}>
             {task.completed ? 'Completed' : 'Pending'}
           </Text>
+        </View>
+
+        <Text style={styles.description}>{task.description}</Text>
+
+        <View style={styles.metaRow}>
           <Text style={styles.date}>Created {formatCreatedDate(task.createdAt)}</Text>
         </View>
 
@@ -58,15 +65,31 @@ export function TaskDetailsScreen({ navigation, route, tasks, onToggleTask, onDe
           <Pressable
             accessibilityRole="button"
             onPress={() => onToggleTask(task.id)}
-            style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
-            <Text style={styles.toggleText}>
+            style={({ pressed }) => [
+              styles.actionButton,
+              task.completed ? styles.markPendingButton : styles.markCompleteButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text
+              style={[
+                styles.toggleText,
+                task.completed ? styles.markPendingText : styles.markCompleteText,
+              ]}
+            >
               {task.completed ? 'Mark Pending' : 'Mark Complete'}
             </Text>
           </Pressable>
+
           <Pressable
             accessibilityRole="button"
             onPress={handleDelete}
-            style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.pressed]}>
+            style={({ pressed }) => [
+              styles.actionButton,
+              styles.deleteButton,
+              pressed && styles.deleteButtonPressed,
+            ]}
+          >
             <Text style={styles.deleteText}>Delete Task</Text>
           </Pressable>
         </View>
@@ -89,8 +112,15 @@ const styles = StyleSheet.create({
     gap: 14,
     padding: 20,
   },
+  header: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 12,
+    justifyContent: 'space-between',
+  },
   title: {
     color: '#111827',
+    flex: 1,
     fontSize: 24,
     fontWeight: '700',
   },
@@ -100,10 +130,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   metaRow: {
-    alignItems: 'center',
     flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
   },
   status: {
     borderRadius: 999,
@@ -126,30 +153,45 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   actions: {
+    flexDirection: 'row',
     gap: 10,
     marginTop: 6,
   },
-  button: {
+  actionButton: {
     alignItems: 'center',
-    borderColor: '#d1d5db',
     borderRadius: 8,
-    borderWidth: 1,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  markCompleteButton: {
+    backgroundColor: '#dcfce7',
+  },
+  markPendingButton: {
+    backgroundColor: '#fef3c7',
   },
   deleteButton: {
-    borderColor: '#fecaca',
+    backgroundColor: '#dc2626',
+  },
+  deleteButtonPressed: {
+    backgroundColor: '#b91c1c',
   },
   pressed: {
     opacity: 0.72,
   },
   toggleText: {
-    color: '#2563eb',
     fontSize: 15,
     fontWeight: '700',
   },
+  markCompleteText: {
+    color: '#166534',
+  },
+  markPendingText: {
+    color: '#92400e',
+  },
   deleteText: {
-    color: '#b91c1c',
+    color: '#fff',
     fontSize: 15,
     fontWeight: '700',
   },

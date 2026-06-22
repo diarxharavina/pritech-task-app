@@ -1,9 +1,9 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import {
-  Button,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -40,13 +40,14 @@ export function AddTaskScreen({ navigation, onAddTask }: Props) {
     };
 
     onAddTask(task);
-    navigation.navigate('TaskList');
+    navigation.goBack();
   }
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}>
+      style={styles.container}
+    >
       <View style={styles.form}>
         <View style={styles.field}>
           <Text style={styles.label}>Title</Text>
@@ -57,6 +58,7 @@ export function AddTaskScreen({ navigation, onAddTask }: Props) {
               setError('');
             }}
             placeholder="Enter task title"
+            placeholderTextColor="#838383"
             style={styles.input}
             value={title}
           />
@@ -71,6 +73,7 @@ export function AddTaskScreen({ navigation, onAddTask }: Props) {
               setError('');
             }}
             placeholder="Enter task description"
+            placeholderTextColor="#838383"
             style={[styles.input, styles.descriptionInput]}
             textAlignVertical="top"
             value={description}
@@ -80,8 +83,29 @@ export function AddTaskScreen({ navigation, onAddTask }: Props) {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <View style={styles.actions}>
-          <Button title="Save Task" onPress={handleSave} />
-          <Button title="Cancel" onPress={() => navigation.goBack()} />
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleSave}
+            style={({ pressed }) => [
+              styles.actionButton,
+              styles.saveButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.saveButtonText}>Save Task</Text>
+          </Pressable>
+
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => navigation.goBack()}
+            style={({ pressed }) => [
+              styles.actionButton,
+              styles.cancelButton,
+              pressed && styles.pressed,
+            ]}
+          >
+            <Text style={styles.cancelButtonText}>Cancel</Text>
+          </Pressable>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -127,6 +151,38 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   actions: {
-    gap: 8,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  actionButton: {
+    alignItems: 'center',
+    borderRadius: 8,
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  saveButton: {
+    backgroundColor: '#2563eb',
+    borderColor: '#2563eb',
+    borderWidth: 1,
+  },
+  cancelButton: {
+    backgroundColor: '#fff',
+    borderColor: '#2563eb',
+    borderWidth: 1,
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  cancelButtonText: {
+    color: '#2563eb',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  pressed: {
+    opacity: 0.72,
   },
 });

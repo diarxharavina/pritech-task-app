@@ -37,13 +37,18 @@ export function TaskItem({ task, onPress, onToggle, onDelete }: Props) {
       <Pressable
         accessibilityRole="button"
         onPress={onPress}
-        style={({ pressed }) => [styles.content, pressed && styles.pressed]}>
+        style={({ pressed }) => [styles.content, pressed && styles.pressed]}
+      >
         <View style={styles.header}>
-          <Text style={[styles.title, task.completed && styles.completedTitle]}>{task.title}</Text>
+          <Text style={[styles.title, task.completed && styles.completedTitle]}>
+            {task.title}
+          </Text>
+
           <Text style={[styles.status, task.completed ? styles.completed : styles.pending]}>
             {task.completed ? 'Completed' : 'Pending'}
           </Text>
         </View>
+
         <Text style={styles.description}>{getShortDescription(task.description)}</Text>
         <Text style={styles.date}>Created {formatCreatedDate(task.createdAt)}</Text>
       </Pressable>
@@ -52,15 +57,31 @@ export function TaskItem({ task, onPress, onToggle, onDelete }: Props) {
         <Pressable
           accessibilityRole="button"
           onPress={onToggle}
-          style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
-          <Text style={styles.toggleText}>
+          style={({ pressed }) => [
+            styles.actionButton,
+            task.completed ? styles.markPendingButton : styles.markCompleteButton,
+            pressed && styles.pressed,
+          ]}
+        >
+          <Text
+            style={[
+              styles.toggleText,
+              task.completed ? styles.markPendingText : styles.markCompleteText,
+            ]}
+          >
             {task.completed ? 'Mark Pending' : 'Mark Complete'}
           </Text>
         </Pressable>
+
         <Pressable
           accessibilityRole="button"
           onPress={onDelete}
-          style={({ pressed }) => [styles.actionButton, styles.deleteButton, pressed && styles.pressed]}>
+          style={({ pressed }) => [
+            styles.actionButton,
+            styles.deleteButton,
+            pressed && styles.deleteButtonPressed,
+          ]}
+        >
           <Text style={styles.deleteText}>Delete</Text>
         </Pressable>
       </View>
@@ -82,6 +103,7 @@ const styles = StyleSheet.create({
   content: {
     gap: 10,
     padding: 16,
+    paddingBottom: 12,
   },
   pressed: {
     opacity: 0.72,
@@ -128,27 +150,43 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   actions: {
-    borderTopColor: '#e6e6ea',
-    borderTopWidth: StyleSheet.hairlineWidth,
     flexDirection: 'row',
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   actionButton: {
     alignItems: 'center',
+    borderRadius: 8,
     flex: 1,
+    justifyContent: 'center',
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 10,
+  },
+  markCompleteButton: {
+    backgroundColor: '#dcfce7',
+  },
+  markPendingButton: {
+    backgroundColor: '#fef3c7',
   },
   deleteButton: {
-    borderLeftColor: '#e6e6ea',
-    borderLeftWidth: StyleSheet.hairlineWidth,
+    backgroundColor: '#dc2626',
+  },
+  deleteButtonPressed: {
+    backgroundColor: '#b91c1c',
   },
   toggleText: {
-    color: '#2563eb',
     fontSize: 14,
     fontWeight: '700',
   },
+  markCompleteText: {
+    color: '#166534',
+  },
+  markPendingText: {
+    color: '#92400e',
+  },
   deleteText: {
-    color: '#b91c1c',
+    color: '#fff',
     fontSize: 14,
     fontWeight: '700',
   },

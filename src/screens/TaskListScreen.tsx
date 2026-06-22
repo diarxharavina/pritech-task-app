@@ -1,11 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useMemo, useState } from 'react';
-import { Button, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { EmptyState } from '../components/EmptyState';
 import { TaskItem } from '../components/TaskItem';
 import type { RootStackParamList } from '../types/navigation';
-import { Quote } from "../types/Quote";
+import { Quote } from '../types/Quote';
 import type { Task } from '../types/task';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TaskList'> & {
@@ -50,10 +50,10 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
         setQuoteLoading(true);
         setQuoteError(false);
 
-        const response = await fetch("https://zenquotes.io/api/random");
+        const response = await fetch('https://zenquotes.io/api/random');
 
         if (!response.ok) {
-          throw new Error("Failed to fetch quote");
+          throw new Error('Failed to fetch quote');
         }
 
         const data: Quote[] = await response.json();
@@ -64,7 +64,7 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
           setQuoteError(true);
         }
       } catch (error) {
-        console.warn("Quote fetch failed:", error);
+        console.warn('Quote fetch failed:', error);
         setQuoteError(true);
       } finally {
         setQuoteLoading(false);
@@ -76,21 +76,11 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.headerText}>
-          <Text style={styles.title}>Tasks</Text>
-          <Text style={styles.description}>{tasks.length} task{tasks.length === 1 ? '' : 's'}</Text>
-        </View>
-        <Button title="Add Task" onPress={() => navigation.navigate('AddTask')} />
-      </View>
-
       <View style={styles.quoteCard}>
         {quoteLoading ? (
           <Text style={styles.quoteText}>Loading quote...</Text>
         ) : quoteError || !quote ? (
-          <Text style={styles.quoteText}>
-            Stay focused and complete your tasks.
-          </Text>
+          <Text style={styles.quoteText}>Stay focused and complete your tasks.</Text>
         ) : (
           <>
             <Text style={styles.quoteText}>"{quote.q}"</Text>
@@ -105,9 +95,11 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
           autoCorrect={false}
           onChangeText={setSearchText}
           placeholder="Search by title"
+          placeholderTextColor="#838383"
           style={styles.searchInput}
           value={searchText}
         />
+
         <View style={styles.filters}>
           {statusFilters.map((filter) => {
             const isSelected = statusFilter === filter.value;
@@ -121,7 +113,8 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
                   styles.filterButton,
                   isSelected && styles.selectedFilterButton,
                   pressed && styles.pressed,
-                ]}>
+                ]}
+              >
                 <Text style={[styles.filterText, isSelected && styles.selectedFilterText]}>
                   {filter.label}
                 </Text>
@@ -153,6 +146,15 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
             }
           />
         }
+        ListFooterComponent={
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => navigation.navigate('AddTask')}
+            style={({ pressed }) => [styles.addButton, pressed && styles.pressed]}
+          >
+            <Text style={styles.addButtonText}>+</Text>
+          </Pressable>
+        }
       />
     </View>
   );
@@ -163,17 +165,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f7f7f8',
   },
-  header: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderBottomColor: '#e6e6ea',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 24,
+  quoteCard: {
+    backgroundColor: '#f2f4f7',
+    borderRadius: 12,
+    padding: 16,
   },
-  headerText: {
-    gap: 4,
+  quoteText: {
+    color: '#333',
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  quoteAuthor: {
+    color: '#666',
+    fontSize: 13,
+    marginTop: 8,
+    textAlign: 'right',
   },
   controls: {
     backgroundColor: '#fff',
@@ -228,29 +234,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 24,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-  },
-  description: {
-    color: '#555',
-    fontSize: 15,
-  },
-  quoteCard: {
-  backgroundColor: "#f2f4f7",
-  padding: 16,
-  borderRadius: 12,
-  marginBottom: 16,
-  },
-  quoteText: {
-    fontSize: 14,
-    color: "#333",
-    lineHeight: 20,
-  },
-  quoteAuthor: {
-    fontSize: 13,
-    color: "#666",
+  addButton: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#2563eb',
+    borderRadius: 999,
+    height: 52,
+    justifyContent: 'center',
     marginTop: 8,
-    textAlign: "right",
+    width: 52,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: '700',
+    lineHeight: 32,
   },
 });
