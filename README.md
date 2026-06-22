@@ -42,14 +42,14 @@ Each task contains:
 * TypeScript
 * React Navigation
 * AsyncStorage
-* ZenQuotes API
+* DummyJSON Quotes API
 
 ## Public API Used
 
-The app fetches a random motivational quote from:
+The app fetches a random quote from:
 
 ```txt
-https://zenquotes.io/api/random
+https://dummyjson.com/quotes/random
 ```
 
 The quote is displayed on the task list screen. If the request fails, the app shows a fallback message.
