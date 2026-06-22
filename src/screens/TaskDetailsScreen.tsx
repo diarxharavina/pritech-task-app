@@ -1,11 +1,13 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { RootStackParamList } from '../types/navigation';
 import type { Task } from '../types/task';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TaskDetails'> & {
   tasks: Task[];
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
 };
 
 function formatCreatedDate(createdAt: string) {
@@ -22,8 +24,14 @@ function formatCreatedDate(createdAt: string) {
   });
 }
 
-export function TaskDetailsScreen({ route, tasks }: Props) {
-  const task = tasks.find((item) => item.id === route.params.taskId);
+export function TaskDetailsScreen({ navigation, route, tasks, onToggleTask, onDeleteTask }: Props) {
+  const { taskId } = route.params;
+  const task = tasks.find((item) => item.id === taskId);
+
+  function handleDelete() {
+    onDeleteTask(taskId);
+    navigation.navigate('TaskList');
+  }
 
   if (!task) {
     return (
@@ -44,6 +52,23 @@ export function TaskDetailsScreen({ route, tasks }: Props) {
             {task.completed ? 'Completed' : 'Pending'}
           </Text>
           <Text style={styles.date}>Created {formatCreatedDate(task.createdAt)}</Text>
+        </View>
+
+        <View style={styles.actions}>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => onToggleTask(task.id)}
+            style={({ pressed }) => [styles.button, pressed && styles.pressed]}>
+            <Text style={styles.toggleText}>
+              {task.completed ? 'Mark Pending' : 'Mark Complete'}
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={handleDelete}
+            style={({ pressed }) => [styles.button, styles.deleteButton, pressed && styles.pressed]}>
+            <Text style={styles.deleteText}>Delete Task</Text>
+          </Pressable>
         </View>
       </View>
     </View>
@@ -99,5 +124,33 @@ const styles = StyleSheet.create({
   date: {
     color: '#6b7280',
     fontSize: 13,
+  },
+  actions: {
+    gap: 10,
+    marginTop: 6,
+  },
+  button: {
+    alignItems: 'center',
+    borderColor: '#d1d5db',
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  deleteButton: {
+    borderColor: '#fecaca',
+  },
+  pressed: {
+    opacity: 0.72,
+  },
+  toggleText: {
+    color: '#2563eb',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  deleteText: {
+    color: '#b91c1c',
+    fontSize: 15,
+    fontWeight: '700',
   },
 });

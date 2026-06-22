@@ -66,7 +66,14 @@ export default function App() {
             {(props) => <AddTaskScreen {...props} onAddTask={addTask} />}
           </Stack.Screen>
           <Stack.Screen name="TaskDetails" options={{ title: 'Task Details' }}>
-            {(props) => <TaskDetailsScreen {...props} tasks={tasks} />}
+            {(props) => (
+              <TaskDetailsScreen
+                {...props}
+                tasks={tasks}
+                onToggleTask={toggleTask}
+                onDeleteTask={deleteTask}
+              />
+            )}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>
