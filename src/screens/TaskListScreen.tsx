@@ -45,34 +45,44 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
   }, [searchText, statusFilter, tasks]);
 
   useEffect(() => {
-    const fetchQuote = async () => {
-      try {
-        setQuoteLoading(true);
-        setQuoteError(false);
+  const fetchQuote = async () => {
+    try {
+      setQuoteLoading(true);
+      setQuoteError(false);
 
-        const response = await fetch('https://zenquotes.io/api/random');
+      const zenResponse = await fetch('https://zenquotes.io/api/random');
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch quote');
+      if (zenResponse.ok) {
+        const zenData: Quote[] = await zenResponse.json();
+
+        if (zenData.length > 0) {
+          setQuote(zenData[0]);
+          return;
         }
-
-        const data: Quote[] = await response.json();
-
-        if (data.length > 0) {
-          setQuote(data[0]);
-        } else {
-          setQuoteError(true);
-        }
-      } catch (error) {
-        console.warn('Quote fetch failed:', error);
-        setQuoteError(true);
-      } finally {
-        setQuoteLoading(false);
       }
-    };
 
-    fetchQuote();
-  }, []);
+      const backupResponse = await fetch('https://dummyjson.com/quotes/random');
+
+      if (!backupResponse.ok) {
+        throw new Error('Failed to fetch quote from backup API');
+      }
+
+      const backupData = await backupResponse.json();
+
+      setQuote({
+        q: backupData.quote,
+        a: backupData.author,
+      });
+    } catch (error) {
+      console.warn('Quote fetch failed:', error);
+      setQuoteError(true);
+    } finally {
+      setQuoteLoading(false);
+    }
+  };
+
+  fetchQuote();
+}, []);
 
   return (
     <View style={styles.container}>
