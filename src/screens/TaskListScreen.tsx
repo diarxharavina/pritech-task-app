@@ -1,10 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { EmptyState } from '../components/EmptyState';
 import { TaskItem } from '../components/TaskItem';
 import type { RootStackParamList } from '../types/navigation';
+import { Quote } from "../types/Quote";
 import type { Task } from '../types/task';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TaskList'> & {
@@ -25,6 +26,10 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
 
+  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(true);
+  const [quoteError, setQuoteError] = useState(false);
+
   const filteredTasks = useMemo(() => {
     const normalizedSearch = searchText.trim().toLowerCase();
 
@@ -39,6 +44,36 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
     });
   }, [searchText, statusFilter, tasks]);
 
+  useEffect(() => {
+    const fetchQuote = async () => {
+      try {
+        setQuoteLoading(true);
+        setQuoteError(false);
+
+        const response = await fetch("https://zenquotes.io/api/random");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch quote");
+        }
+
+        const data: Quote[] = await response.json();
+
+        if (data.length > 0) {
+          setQuote(data[0]);
+        } else {
+          setQuoteError(true);
+        }
+      } catch (error) {
+        console.warn("Quote fetch failed:", error);
+        setQuoteError(true);
+      } finally {
+        setQuoteLoading(false);
+      }
+    };
+
+    fetchQuote();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -47,6 +82,21 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
           <Text style={styles.description}>{tasks.length} task{tasks.length === 1 ? '' : 's'}</Text>
         </View>
         <Button title="Add Task" onPress={() => navigation.navigate('AddTask')} />
+      </View>
+
+      <View style={styles.quoteCard}>
+        {quoteLoading ? (
+          <Text style={styles.quoteText}>Loading quote...</Text>
+        ) : quoteError || !quote ? (
+          <Text style={styles.quoteText}>
+            Stay focused and complete your tasks.
+          </Text>
+        ) : (
+          <>
+            <Text style={styles.quoteText}>"{quote.q}"</Text>
+            <Text style={styles.quoteAuthor}>- {quote.a}</Text>
+          </>
+        )}
       </View>
 
       <View style={styles.controls}>
@@ -185,5 +235,22 @@ const styles = StyleSheet.create({
   description: {
     color: '#555',
     fontSize: 15,
+  },
+  quoteCard: {
+  backgroundColor: "#f2f4f7",
+  padding: 16,
+  borderRadius: 12,
+  marginBottom: 16,
+  },
+  quoteText: {
+    fontSize: 14,
+    color: "#333",
+    lineHeight: 20,
+  },
+  quoteAuthor: {
+    fontSize: 13,
+    color: "#666",
+    marginTop: 8,
+    textAlign: "right",
   },
 });
