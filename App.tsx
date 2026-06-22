@@ -36,12 +36,31 @@ export default function App() {
     setTasks((currentTasks) => [task, ...currentTasks]);
   }
 
+  function toggleTask(taskId: string) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  }
+
+  function deleteTask(taskId: string) {
+    setTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
+  }
+
   return (
     <SafeAreaProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="TaskList">
           <Stack.Screen name="TaskList" options={{ title: 'Tasks' }}>
-            {(props) => <TaskListScreen {...props} tasks={tasks} />}
+            {(props) => (
+              <TaskListScreen
+                {...props}
+                tasks={tasks}
+                onToggleTask={toggleTask}
+                onDeleteTask={deleteTask}
+              />
+            )}
           </Stack.Screen>
           <Stack.Screen name="AddTask" options={{ title: 'Add Task' }}>
             {(props) => <AddTaskScreen {...props} onAddTask={addTask} />}

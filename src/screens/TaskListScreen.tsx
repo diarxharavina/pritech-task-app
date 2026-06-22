@@ -8,9 +8,11 @@ import type { Task } from '../types/task';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TaskList'> & {
   tasks: Task[];
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
 };
 
-export function TaskListScreen({ navigation, tasks }: Props) {
+export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -29,6 +31,8 @@ export function TaskListScreen({ navigation, tasks }: Props) {
           <TaskItem
             task={item}
             onPress={() => navigation.navigate('TaskDetails', { taskId: item.id })}
+            onToggle={() => onToggleTask(item.id)}
+            onDelete={() => onDeleteTask(item.id)}
           />
         )}
         ListEmptyComponent={

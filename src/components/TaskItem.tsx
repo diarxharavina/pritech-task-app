@@ -5,6 +5,8 @@ import type { Task } from '../types/task';
 type Props = {
   task: Task;
   onPress: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
 };
 
 function formatCreatedDate(createdAt: string) {
@@ -29,21 +31,40 @@ function getShortDescription(description: string) {
   return `${description.slice(0, 87)}...`;
 }
 
-export function TaskItem({ task, onPress }: Props) {
+export function TaskItem({ task, onPress, onToggle, onDelete }: Props) {
   return (
-    <Pressable
-      accessibilityRole="button"
-      onPress={onPress}
-      style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{task.title}</Text>
-        <Text style={[styles.status, task.completed ? styles.completed : styles.pending]}>
-          {task.completed ? 'Completed' : 'Pending'}
-        </Text>
+    <View style={[styles.container, task.completed && styles.completedContainer]}>
+      <Pressable
+        accessibilityRole="button"
+        onPress={onPress}
+        style={({ pressed }) => [styles.content, pressed && styles.pressed]}>
+        <View style={styles.header}>
+          <Text style={[styles.title, task.completed && styles.completedTitle]}>{task.title}</Text>
+          <Text style={[styles.status, task.completed ? styles.completed : styles.pending]}>
+            {task.completed ? 'Completed' : 'Pending'}
+          </Text>
+        </View>
+        <Text style={styles.description}>{getShortDescription(task.description)}</Text>
+        <Text style={styles.date}>Created {formatCreatedDate(task.createdAt)}</Text>
+      </Pressable>
+
+      <View style={styles.actions}>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onToggle}
+          style={({ pressed }) => [styles.actionButton, pressed && styles.pressed]}>
+          <Text style={styles.toggleText}>
+            {task.completed ? 'Mark Pending' : 'Mark Complete'}
+          </Text>
+        </Pressable>
+        <Pressable
+          accessibilityRole="button"
+          onPress={onDelete}
+          style={({ pressed }) => [styles.actionButton, styles.deleteButton, pressed && styles.pressed]}>
+          <Text style={styles.deleteText}>Delete</Text>
+        </Pressable>
       </View>
-      <Text style={styles.description}>{getShortDescription(task.description)}</Text>
-      <Text style={styles.date}>Created {formatCreatedDate(task.createdAt)}</Text>
-    </Pressable>
+    </View>
   );
 }
 
@@ -53,6 +74,12 @@ const styles = StyleSheet.create({
     borderColor: '#e6e6ea',
     borderRadius: 8,
     borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+  },
+  completedContainer: {
+    backgroundColor: '#f9fafb',
+  },
+  content: {
     gap: 10,
     padding: 16,
   },
@@ -70,6 +97,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontWeight: '700',
+  },
+  completedTitle: {
+    color: '#6b7280',
+    textDecorationLine: 'line-through',
   },
   description: {
     color: '#4b5563',
@@ -95,5 +126,30 @@ const styles = StyleSheet.create({
   date: {
     color: '#6b7280',
     fontSize: 13,
+  },
+  actions: {
+    borderTopColor: '#e6e6ea',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    flexDirection: 'row',
+  },
+  actionButton: {
+    alignItems: 'center',
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  deleteButton: {
+    borderLeftColor: '#e6e6ea',
+    borderLeftWidth: StyleSheet.hairlineWidth,
+  },
+  toggleText: {
+    color: '#2563eb',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  deleteText: {
+    color: '#b91c1c',
+    fontSize: 14,
+    fontWeight: '700',
   },
 });
