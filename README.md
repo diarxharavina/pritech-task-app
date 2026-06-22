@@ -1,50 +1,140 @@
-# Welcome to your Expo app 👋
+# PRITECH React Native Task App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A simple React Native mobile app built for the PRITECH React Native technical task.
+The app allows users to manage a small list of personal tasks with local storage, navigation, search, filtering, and public API data fetching.
 
-## Get started
+## Features
 
-1. Install dependencies
+* View a list of tasks
+* Add a new task
+* Mark a task as completed or pending
+* Delete a task
+* View task details
+* Basic input validation
+* Empty state handling
+* Clean and simple UI
+* Fetch and display a quote from a public API
 
-   ```bash
-   npm install
-   ```
+## Bonus Features Implemented
 
-2. Start the app
+* Search tasks by title
+* Filter tasks by status:
+  * All
+  * Completed
+  * Pending
 
-   ```bash
-   npx expo start
-   ```
+* Store tasks locally on the device using AsyncStorage
+* Navigation between screens
 
-In the output, you'll find options to open the app in a
+## Task Fields
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Each task contains:
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+* Title
+* Description
+* Status
+* Created date
 
-## Get a fresh project
+## Tech Stack
 
-When you're ready, run:
+* React Native
+* Expo
+* TypeScript
+* React Navigation
+* AsyncStorage
+* ZenQuotes API
 
-```bash
-npm run reset-project
+## Public API Used
+
+The app fetches a random motivational quote from:
+
+```txt
+https://zenquotes.io/api/random
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The quote is displayed on the task list screen. If the request fails, the app shows a fallback message.
 
-## Learn more
+## Project Structure
 
-To learn more about developing your project with Expo, look at the following resources:
+```txt
+src/
+  components/
+    EmptyState.tsx
+    TaskItem.tsx
+  screens/
+    AddTaskScreen.tsx
+    TaskDetailsScreen.tsx
+    TaskListScreen.tsx
+  storage/
+    taskStorage.ts
+  types/
+    navigation.ts
+    Quote.ts
+    task.ts
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Setup Instructions
 
-## Join the community
+1. Clone the repository:
 
-Join our community of developers creating universal apps.
+```bash
+git clone https://github.com/diarxharavina/pritech-task-app.git
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+2. Navigate into the project folder:
+
+```bash
+cd pritech-task-app
+```
+
+3. Install dependencies:
+
+```bash
+npm install
+```
+
+4. Start the Expo development server:
+
+```bash
+npx expo start
+```
+
+5. Open the app using one of the following:
+
+* Expo Go on a physical device
+* Android Emulator
+* iOS Simulator
+
+## Available Scripts
+
+Start the app:
+
+```bash
+npm start
+```
+
+Start with Expo directly:
+
+```bash
+npx expo start
+```
+
+## Screenshots
+
+Added screenshots inside the `screenshots` folder:
+
+```txt
+screenshots/
+  task_list.png
+  add_task.png
+  task_details.png
+  empty_state.png
+```
+
+## Implementation Summary
+
+The app uses functional components and React hooks to manage state and screen behavior. Tasks are stored in the main app state and persisted locally using AsyncStorage, so they remain available after closing and reopening the app.
+
+React Navigation is used to move between the task list, add task, and task details screens. The task list supports searching by title and filtering by completion status. A public API request is used to display a motivational quote on the main screen.
+
+The UI is kept simple and consistent, using reusable components such as `TaskItem` and `EmptyState`.
