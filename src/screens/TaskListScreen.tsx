@@ -50,29 +50,14 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
       setQuoteLoading(true);
       setQuoteError(false);
 
-      const zenResponse = await fetch('https://zenquotes.io/api/random');
+      const response = await fetch('https://dummyjson.com/quotes/random');
 
-      if (zenResponse.ok) {
-        const zenData: Quote[] = await zenResponse.json();
-
-        if (zenData.length > 0) {
-          setQuote(zenData[0]);
-          return;
-        }
+      if (!response.ok) {
+        throw new Error('Failed to fetch quote');
       }
 
-      const backupResponse = await fetch('https://dummyjson.com/quotes/random');
-
-      if (!backupResponse.ok) {
-        throw new Error('Failed to fetch quote from backup API');
-      }
-
-      const backupData = await backupResponse.json();
-
-      setQuote({
-        q: backupData.quote,
-        a: backupData.author,
-      });
+      const data: Quote = await response.json();
+      setQuote(data);
     } catch (error) {
       console.warn('Quote fetch failed:', error);
       setQuoteError(true);
@@ -93,8 +78,8 @@ export function TaskListScreen({ navigation, tasks, onToggleTask, onDeleteTask }
           <Text style={styles.quoteText}>Stay focused and complete your tasks.</Text>
         ) : (
           <>
-            <Text style={styles.quoteText}>"{quote.q}"</Text>
-            <Text style={styles.quoteAuthor}>- {quote.a}</Text>
+            <Text style={styles.quoteText}>"{quote.quote}"</Text>
+            <Text style={styles.quoteAuthor}>- {quote.author}</Text>
           </>
         )}
       </View>
