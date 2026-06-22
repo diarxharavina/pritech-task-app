@@ -30,7 +30,11 @@ const initialTasks: Task[] = [
 ];
 
 export default function App() {
-  const [tasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+
+  function addTask(task: Task) {
+    setTasks((currentTasks) => [task, ...currentTasks]);
+  }
 
   return (
     <SafeAreaProvider>
@@ -39,11 +43,9 @@ export default function App() {
           <Stack.Screen name="TaskList" options={{ title: 'Tasks' }}>
             {(props) => <TaskListScreen {...props} tasks={tasks} />}
           </Stack.Screen>
-          <Stack.Screen
-            name="AddTask"
-            component={AddTaskScreen}
-            options={{ title: 'Add Task' }}
-          />
+          <Stack.Screen name="AddTask" options={{ title: 'Add Task' }}>
+            {(props) => <AddTaskScreen {...props} onAddTask={addTask} />}
+          </Stack.Screen>
           <Stack.Screen name="TaskDetails" options={{ title: 'Task Details' }}>
             {(props) => <TaskDetailsScreen {...props} tasks={tasks} />}
           </Stack.Screen>

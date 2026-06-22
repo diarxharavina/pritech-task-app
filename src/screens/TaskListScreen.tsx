@@ -18,7 +18,7 @@ export function TaskListScreen({ navigation, tasks }: Props) {
           <Text style={styles.title}>Tasks</Text>
           <Text style={styles.description}>{tasks.length} task{tasks.length === 1 ? '' : 's'}</Text>
         </View>
-        <Button title="Add" onPress={() => navigation.navigate('AddTask')} />
+        <Button title="Add Task" onPress={() => navigation.navigate('AddTask')} />
       </View>
 
       <FlatList
